@@ -1,0 +1,55 @@
+<section class="filters">
+  <form (ngSubmit)="search()">
+    <label>
+      Check In:
+      <input type="date" [(ngModel)]="filter.checkIn" name="checkIn" />
+    </label>
+    <label>
+      Check Out:
+      <input type="date" [(ngModel)]="filter.checkOut" name="checkOut" />
+    </label>
+    <label>
+      Capacity:
+      <select [(ngModel)]="filter.capacity" name="capacity">
+        <option value="">Any</option>
+        <option value="Single">Single</option>
+        <option value="Double">Double</option>
+        <option value="Queen">Queen</option>
+        <option value="King">King</option>
+      </select>
+    </label>
+    <button type="submit">Search</button>
+  </form>
+</section>
+
+<p *ngIf="loading" class="status-msg">Loading rooms…</p>
+<p *ngIf="error" class="status-msg error">{{ error }}</p>
+
+<section class="grid">
+  <ng-container *ngIf="!loading && rooms?.length > 0">
+    <div *ngFor="let room of rooms" class="card">
+      <div class="card-image">
+        <img [src]="room.photo || defaultPhoto" [alt]="room.name" />
+      </div>
+      <div class="card-body">
+        <h3>{{ room.name }}</h3>
+        <p class="description">{{ room.description }}</p>
+        <div class="details">
+          <span class="detail-item"><strong>Capacity:</strong> {{ room.capacity }}</span>
+          <span class="detail-item"><strong>Price:</strong> {{ room.pricePerNight | currency }}</span>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</section>
+
+<p *ngIf="!loading && !error && rooms?.length === 0" class="status-msg">No rooms found.</p>
+
+<!-- Pagination -->
+<nav class="pagination" *ngIf="!loading && totalCount > 0">
+  <button (click)="goToPage(pageIndex - 1)" [disabled]="pageIndex === 0">← Prev</button>
+
+  <span class="page-info">Page {{ pageIndex + 1 }} of {{ totalPages }}</span>
+
+  <button (click)="goToPage(pageIndex + 1)" [disabled]="pageIndex >= totalPages - 1">Next →</button>
+</nav>
