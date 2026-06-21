@@ -2,6 +2,9 @@ using HotelReservation.Application.Extensions;
 using HotelReservation.Infrastructure.Extensions;
 using System.Text.Json.Serialization;
 using HotelReservation.API.Middlewares;
+using Microsoft.AspNetCore.Mvc;
+using Application.DTOs.Common;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +32,24 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var details = context.ModelState.Values
+        .SelectMany(v => v.Errors)
+        .Select(e => e.ErrorMessage)
+        .ToArray();
+           
+        var response = new ErrorResponse(
+            message: "Validation failed",
+            errorCode: "VALIDATION_ERROR",
+            details: details
+        );
+
+        return new BadRequestObjectResult(response);
+    };
+});
 
 // Configure Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();

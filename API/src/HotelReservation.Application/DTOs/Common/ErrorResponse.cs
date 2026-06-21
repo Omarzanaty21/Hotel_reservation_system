@@ -2,7 +2,7 @@ namespace Application.DTOs.Common;
 
 public class ErrorResponse
 {
-    public ErrorResponse(string message, string errorCode, Dictionary<string, string[]>? details = null)
+    public ErrorResponse(string message, string errorCode, string[]? details = null)
     {
         Message = message;
         ErrorCode = errorCode;
@@ -12,5 +12,5 @@ public class ErrorResponse
 
     public string ErrorCode { get; set; }
 
-    public Dictionary<string, string[]>? Details { get; set; }
+    public string[]? Details { get; set; }
 }

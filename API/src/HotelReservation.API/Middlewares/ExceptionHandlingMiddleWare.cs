@@ -2,6 +2,7 @@
 using System.Net;
 using System.Text.Json;
 using Application.DTOs.Common;
+using HotelReservation.Application.Exceptions;
 
 namespace HotelReservation.API.Middlewares;
     
@@ -48,6 +49,12 @@ public class ExceptionHandlingMiddleware
         {
             statusCode = HttpStatusCode.Unauthorized;
             errorCode = "UNAUTHORIZED";
+            message = exception.Message;
+        }
+        else if (exception is InvalidTimeSpanException)
+        {
+            statusCode = HttpStatusCode.BadRequest;
+            errorCode = "INVALID_TIME_SPAN";
             message = exception.Message;
         }
 

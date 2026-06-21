@@ -1,5 +1,7 @@
+using Application.DTOs.Common;
 using AutoMapper;
 using HotelReservation.Application.DTOs;
+using HotelReservation.Application.Exceptions;
 using HotelReservation.Application.Interfaces;
 using HotelReservation.Domain.Common;
 using HotelReservation.Domain.Entities;
@@ -20,9 +22,12 @@ public class RoomManagementController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpPost("Rooms")]
-    public async Task<IActionResult> Index([FromBody] RoomFilterDto filter, [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
+    [HttpGet("Rooms")]
+    public async Task<IActionResult> Index([FromQuery] RoomFilterDto filter, [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
     {
+        if(filter.CheckIn >= filter.CheckOut)
+          throw new InvalidTimeSpanException("Check-in date must be before check-out date.");
+
         var pagedAvailableRooms = await _roomService.GetAvailableRoomsAsync(filter, pageIndex, pageSize);
 
         var roomsDto = _mapper.Map<IReadOnlyList<RoomDto>>(pagedAvailableRooms.Items);

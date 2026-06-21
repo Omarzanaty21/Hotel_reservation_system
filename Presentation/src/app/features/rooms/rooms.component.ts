@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RoomsService } from '../../core/services/rooms.service';
 import { Room } from '../../models/room/room.model';
 import { RoomFilter } from '../../models/room/filter.model';
+import { ApiError } from '../../models/error.model';
 
 @Component({
   selector: 'app-rooms',
@@ -16,7 +17,7 @@ export class RoomsComponent implements OnInit {
   rooms: Room[] = [];
   defaultPhoto = '/images/hotel_default_pic.avif';
   loading = false;
-  error: string | null = null;
+  error: ApiError | null = null;
 
   filter: RoomFilter = { checkIn: null, checkOut: null, capacity: null };
   pageIndex = 0;
@@ -67,8 +68,8 @@ export class RoomsComponent implements OnInit {
         // 3. Force Angular to re-render the view
         this.cdr.detectChanges(); 
       },
-      error: (err) => {
-        this.error = err?.message || 'Unable to load rooms';
+      error: (err: ApiError) => {
+        this.error = err;
         this.rooms = [];
         this.loading = false;
         

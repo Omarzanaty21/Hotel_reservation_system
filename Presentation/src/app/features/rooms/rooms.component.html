@@ -23,7 +23,7 @@
 </section>
 
 <p *ngIf="loading" class="status-msg">Loading rooms…</p>
-<p *ngIf="error" class="status-msg error">{{ error }}</p>
+<p *ngIf="error" class="status-msg error">{{ error.message }}</p>
 
 <section class="grid">
   <ng-container *ngIf="!loading && rooms?.length > 0">

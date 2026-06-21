@@ -14,7 +14,7 @@ export class RoomsService {
   constructor(private http: HttpClient) {}
 
   getAvailableRooms(filter: any, pageIndex = 0, pageSize = 10): Observable<PagedResult<Room>> {
-    const params = `?pageIndex=${pageIndex}&pageSize=${pageSize}`;
-    return this.http.post<PagedResult<Room>>(`${this.base}${params}`, filter);
+    const params = `?pageIndex=${pageIndex}&pageSize=${pageSize}&checkIn=${filter.checkIn || ''}&checkOut=${filter.checkOut || ''}&capacity=${filter.capacity || ''}`;
+    return this.http.get<PagedResult<Room>>(`${this.base}${params}`);
   }
 }
