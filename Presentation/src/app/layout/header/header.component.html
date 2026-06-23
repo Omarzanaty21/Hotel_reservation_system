@@ -1,0 +1,35 @@
+<header class="header">
+  <a class="header__brand" routerLink="/" aria-label="Hotel Reservation home">
+    Hotel Reservation
+  </a>
+
+  <button
+    class="header__menu-toggle"
+    type="button"
+    aria-label="Toggle navigation"
+    aria-controls="primary-nav"
+    [attr.aria-expanded]="menuOpen"
+    (click)="menuOpen = !menuOpen"
+  >
+    <span class="header__menu-icon"></span>
+    <span class="header__menu-icon"></span>
+    <span class="header__menu-icon"></span>
+  </button>
+
+  <nav
+    id="primary-nav"
+    class="header__nav"
+    [class.header__nav--open]="menuOpen"
+    aria-label="Primary navigation"
+  >
+    <a class="header__nav-link" routerLink="/login" routerLinkActive="header__nav-link--active">
+      Login
+    </a>
+    <a class="header__nav-link" routerLink="/rooms/add" routerLinkActive="header__nav-link--active">
+      Add Room
+    </a>
+    <a class="header__nav-link" routerLink="/reservations" routerLinkActive="header__nav-link--active">
+      Reservations
+    </a>
+  </nav>
+</header>

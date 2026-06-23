@@ -1,0 +1,19 @@
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 60px;
+  background-color: #4e5d88;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+
+.footer__copy {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #ffffff;
+  text-align: center;
+}

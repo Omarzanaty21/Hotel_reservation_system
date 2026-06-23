@@ -5,11 +5,12 @@ import { RoomsService } from '../../core/services/rooms.service';
 import { Room } from '../../models/room/room.model';
 import { RoomFilter } from '../../models/room/filter.model';
 import { ApiError } from '../../models/error.model';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-rooms',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './rooms.component.html',
   styleUrls: ['./rooms.component.css'],
 })

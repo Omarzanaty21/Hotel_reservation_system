@@ -1,0 +1,98 @@
+/* ── Wrapper ──────────────────────────────────────────────────────────────── */
+
+.reservation-form-wrapper {
+  max-width: 480px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgb(0 0 0 / 0.08);
+}
+
+.reservation-form-wrapper__title {
+  margin: 0 0 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+/* ── Form layout ──────────────────────────────────────────────────────────── */
+
+.reservation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Individual field ─────────────────────────────────────────────────────── */
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-field__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-field__input {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #111827;
+  background: #f9fafb;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+  outline: none;
+}
+
+.form-field__input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgb(79 70 229 / 0.15);
+  background: #ffffff;
+}
+
+.form-field__input--error {
+  border-color: #dc2626;
+}
+
+.form-field__input--error:focus {
+  box-shadow: 0 0 0 3px rgb(220 38 38 / 0.15);
+}
+
+/* ── Validation messages ──────────────────────────────────────────────────── */
+
+.form-field__error {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #dc2626;
+}
+
+/* ── Submit button ────────────────────────────────────────────────────────── */
+
+.reservation-form__submit {
+  margin-top: 0.5rem;
+  padding: 0.7rem 1.5rem;
+  background: #4f46e5;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.reservation-form__submit:hover:not(:disabled) {
+  background: #4338ca;
+}
+
+.reservation-form__submit:disabled {
+  background: #a5b4fc;
+  cursor: not-allowed;
+}

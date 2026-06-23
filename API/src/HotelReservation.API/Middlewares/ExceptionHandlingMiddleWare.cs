@@ -57,6 +57,12 @@ public class ExceptionHandlingMiddleware
             errorCode = "INVALID_TIME_SPAN";
             message = exception.Message;
         }
+        else if (exception is OverlappingDatesException)
+        {
+            statusCode = HttpStatusCode.BadRequest;
+            errorCode = "OVERLAPPING_DATES";
+            message = exception.Message;
+        }
 
         context.Response.StatusCode = (int)statusCode;
 

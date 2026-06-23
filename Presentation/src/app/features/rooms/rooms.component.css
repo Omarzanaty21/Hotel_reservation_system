@@ -98,3 +98,38 @@ form {
   font-size: 0.9rem;
   color: #374151;
 }
+
+.reserve-btn {
+  margin-top: 1rem;
+
+  width: 100%;
+  padding: 0.75rem 1rem;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #2563eb;
+  color: white;
+
+  font-size: 1rem;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reserve-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.reserve-btn:active {
+  transform: translateY(0);
+}
+
+.reserve-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+}

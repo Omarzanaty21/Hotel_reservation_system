@@ -1,10 +1,12 @@
 using Application.DTOs.Common;
 using AutoMapper;
+using HotelReservation.Application.Dtos;
 using HotelReservation.Application.DTOs;
 using HotelReservation.Application.Exceptions;
 using HotelReservation.Application.Interfaces;
 using HotelReservation.Domain.Common;
 using HotelReservation.Domain.Entities;
+using HotelReservation.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelReservation.API.Controllers;
@@ -14,14 +16,21 @@ namespace HotelReservation.API.Controllers;
 public class RoomManagementController : ControllerBase
 {
     private readonly IRoomService _roomService;
+    private readonly IReservationService _reservationService;
     private readonly IMapper _mapper;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public RoomManagementController(IRoomService roomService, IMapper mapper)
+    public RoomManagementController(IRoomService roomService,
+                                    IReservationService reservationService,
+                                    IMapper mapper,
+                                    IUnitOfWork unitOfWork)
     {
         _roomService = roomService;
+        _reservationService = reservationService;
         _mapper = mapper;
+        _unitOfWork = unitOfWork;
     }
-
+    #region Rooms
     [HttpGet("Rooms")]
     public async Task<IActionResult> Index([FromQuery] RoomFilterDto filter, [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
     {
@@ -42,4 +51,35 @@ public class RoomManagementController : ControllerBase
 
         return Ok(response);
     }
+
+    #endregion
+
+    #region Reservations
+    [HttpPost("Reservations")]
+    public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto createReservationDto)
+    {
+        ValidateReservationDates(createReservationDto.CheckIn, createReservationDto.CheckOut);
+
+        var reservation = await _reservationService.CreateReservationAsync(createReservationDto);
+
+        await _unitOfWork.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(CreateReservation), new { id = reservation.Id }, reservation);
+    }
+    #endregion
+
+    #region Helpers
+    private void ValidateReservationDates(DateOnly? checkIn, DateOnly? checkOut)
+    {
+        if(checkIn < DateOnly.FromDateTime(DateTime.Now))
+        {
+            throw new InvalidTimeSpanException("Check-in date cannot be in the past.");
+        }
+        else if (checkIn >= checkOut)
+        {
+            throw new InvalidTimeSpanException("Check-out date must be after check-in date.");
+        }
+    }
+    #endregion
 }
+    

@@ -38,6 +38,9 @@
           <span class="detail-item"><strong>Capacity:</strong> {{ room.capacity }}</span>
           <span class="detail-item"><strong>Price:</strong> {{ room.pricePerNight | currency }}</span>
         </div>
+        <button class="reserve-btn" [routerLink]="['/reservations/create']" [queryParams]="{ roomId: room.id, roomName: room.name, capacity: room.capacity }">
+            Reserve Now
+        </button>
       </div>
     </div>
   </ng-container>

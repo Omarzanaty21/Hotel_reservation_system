@@ -12,6 +12,7 @@ public static class ServiceCollectionExtensions
         services.AddAutoMapper(cfg => cfg.AddMaps(typeof(ServiceCollectionExtensions).Assembly));
 
         services.AddScoped<IRoomService, RoomService>();
+        services.AddScoped<IReservationService, ReservationService>();
 
         return services;
     }
