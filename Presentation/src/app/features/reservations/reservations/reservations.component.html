@@ -68,6 +68,18 @@
         </div>
       </div>
 
+      <!-- Cancel button -->
+      <div class="card__actions">
+        <input type="hidden" [value]="r.id" />
+        <button
+          class="cancel-btn"
+          [disabled]="deletingId === r.id"
+          (click)="cancelReservation(r.id)"
+        >
+          {{ deletingId === r.id ? 'Cancelling…' : 'Cancel Reservation' }}
+        </button>
+      </div>
+
     </div>
   </ng-container>
 </section>

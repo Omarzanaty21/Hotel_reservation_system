@@ -4,6 +4,7 @@ namespace HotelReservation.Application.Dtos;
 
 public class ReservationDto
 {
+    public int Id { get; set; }
     public DateOnly CheckIn { get; set; }
     public DateOnly CheckOut { get; set; }
     public RoomDto Room {get; set;}

@@ -9,4 +9,5 @@ public interface IReservationService
 {
     Task<PagedResult<Reservation>> GetReservationsAsync(ReservationFilterDto filter, int pageIndex, int pageSize);
     Task<Reservation> CreateReservationAsync(CreateReservationDto createReservationDto);
+    Task DeleteReservationAsync(int reservationId);
 }

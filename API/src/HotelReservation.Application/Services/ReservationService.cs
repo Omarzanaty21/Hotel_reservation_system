@@ -47,6 +47,17 @@ public class ReservationService : IReservationService
             includeRoom: true);
     }
 
+    public async Task DeleteReservationAsync(int reservationId)
+    {
+        var reservation = await _reservationRepository.GetByIdAsync(reservationId);
+        if (reservation == null)
+        {
+            throw new KeyNotFoundException($"Reservation with ID {reservationId} not found.");
+        }
+        
+        _reservationRepository.Delete(reservation);
+    }
+
     private static Expression<Func<Reservation, bool>>? BuildReservationFilter(ReservationFilterDto filter)
     {
         return reservation =>

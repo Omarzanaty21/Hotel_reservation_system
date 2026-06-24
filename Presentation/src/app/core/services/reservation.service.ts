@@ -30,4 +30,8 @@ export class ReservationsService {
       `&filter.createdAt=${filter.createdAt ?? ''}`;
     return this.http.get<PagedResult<ReservationDto>>(`${this.base}${params}`);
   }
+
+  cancelReservation(reservationId: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/${reservationId}`);
+  }
 }

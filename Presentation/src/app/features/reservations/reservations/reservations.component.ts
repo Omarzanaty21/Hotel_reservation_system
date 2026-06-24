@@ -5,6 +5,7 @@ import { ReservationsService } from '../../../core/services/reservation.service'
 import { ReservationDto } from '../../../models/reservation/reservation.model';
 import { ReservationFilter } from '../../../models/reservation/reservation-filter.model';
 import { ApiError } from '../../../models/error.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-reservations',
@@ -17,6 +18,7 @@ export class ReservationsComponent implements OnInit {
   reservations: ReservationDto[] = [];
   loading = false;
   error: ApiError | null = null;
+  deletingId: number | null = null;
 
   filter: ReservationFilter = { searchQuery: null, createdAt: null };
   pageIndex = 0;
@@ -45,6 +47,31 @@ export class ReservationsComponent implements OnInit {
     if (page < 0 || page >= this.totalPages) return;
     this.pageIndex = page;
     this.loadReservations();
+  }
+
+  cancelReservation(reservationId: number): void {
+    this.deletingId = reservationId;
+    this.error = null;
+    this.cdr.detectChanges();
+
+    this.reservationsService.cancelReservation(reservationId).subscribe({
+      next: () => {
+        this.deletingId = null;
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Reservation cancelled successfully.',
+          confirmButtonColor: '#22c55e',
+        }).then(() => {
+          this.loadReservations();
+        });
+      },
+      error: (err: ApiError) => {
+        this.deletingId = null;
+        this.error = err;
+        this.cdr.detectChanges();
+      },
+    });
   }
 
   private loadReservations(): void {

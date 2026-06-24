@@ -8,6 +8,7 @@ export interface RoomDto {
 }
 
 export interface ReservationDto {
+  id: number;
   checkIn: string;
   checkOut: string;
   room: RoomDto;

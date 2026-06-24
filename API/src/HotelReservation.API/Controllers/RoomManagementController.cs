@@ -86,6 +86,14 @@ public class RoomManagementController : ControllerBase
 
         return CreatedAtAction(nameof(CreateReservation), new { id = reservation.Id }, reservation);
     }
+    [HttpDelete("Reservations/{reservationId}")]
+    public async Task<IActionResult> DeleteReservation(int reservationId)
+    {
+        await _reservationService.DeleteReservationAsync(reservationId);
+        await _unitOfWork.SaveChangesAsync();
+        
+        return NoContent();
+    }
     #endregion
 
     #region Helpers
