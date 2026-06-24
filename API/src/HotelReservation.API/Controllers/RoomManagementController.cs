@@ -55,6 +55,26 @@ public class RoomManagementController : ControllerBase
     #endregion
 
     #region Reservations
+
+    [HttpGet("Reservations")]
+    public async Task<IActionResult> Index([FromQuery] ReservationFilterDto filter, [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
+    {
+
+        var pagedReservations = await _reservationService.GetReservationsAsync(filter, pageIndex, pageSize);
+
+        var reservationsDto = _mapper.Map<IReadOnlyList<ReservationDto>>(pagedReservations.Items);
+
+        var response = new PagedResult<ReservationDto>
+        {
+            Items = reservationsDto,
+            TotalCount = pagedReservations.TotalCount,
+            PageIndex = pagedReservations.PageIndex,
+            PageSize = pagedReservations.PageSize
+        };
+
+        return Ok(response);
+    }
+
     [HttpPost("Reservations")]
     public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto createReservationDto)
     {

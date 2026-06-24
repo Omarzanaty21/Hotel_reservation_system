@@ -20,6 +20,9 @@ interface ReservationForm {
   roomId: FormControl<number>;
   checkIn: FormControl<string>;
   checkOut: FormControl<string>;
+  guestName: FormControl<string>;
+  guestEmail: FormControl<string>;
+  guestNumber: FormControl<string>;
 }
 
 @Component({
@@ -55,7 +58,16 @@ export class CreateReservationComponent implements OnInit {
           Validators.required,
           notInPast(),
         ]),
-        checkOut: this.fb.nonNullable.control('', [Validators.required])
+        checkOut: this.fb.nonNullable.control('', [Validators.required]),
+        guestName: this.fb.nonNullable.control('', [Validators.required]),
+        guestEmail: this.fb.nonNullable.control('', [
+          Validators.required,
+          Validators.email,
+        ]),
+        guestNumber: this.fb.nonNullable.control('', [
+          Validators.required,
+          Validators.pattern(/^\+?[\d\s\-().]{7,20}$/),
+        ]),
       },
       { validators: checkOutAfterCheckIn() },
     );
@@ -82,6 +94,18 @@ export class CreateReservationComponent implements OnInit {
 
   get checkOut(): FormControl<string> {
     return this.form.controls.checkOut;
+  }
+
+  get guestName(): FormControl<string> {
+    return this.form.controls.guestName;
+  }
+
+  get guestEmail(): FormControl<string> {
+    return this.form.controls.guestEmail;
+  }
+
+  get guestNumber(): FormControl<string> {
+    return this.form.controls.guestNumber;
   }
 
 

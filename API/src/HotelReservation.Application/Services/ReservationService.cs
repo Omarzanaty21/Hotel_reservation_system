@@ -1,7 +1,10 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using HotelReservation.Application.Dtos;
+using HotelReservation.Application.DTOs;
 using HotelReservation.Application.Exceptions;
 using HotelReservation.Application.Interfaces;
+using HotelReservation.Domain.Common;
 using HotelReservation.Domain.Entities;
 using HotelReservation.Domain.Interfaces;
 
@@ -32,6 +35,25 @@ public class ReservationService : IReservationService
 
         await _reservationRepository.AddAsync(createdReservation);
         return createdReservation;
+    }
+    public async Task<PagedResult<Reservation>> GetReservationsAsync(ReservationFilterDto filter, int pageIndex, int pageSize)
+    {
+        var reservationFilter = BuildReservationFilter(filter);
+
+        return await _reservationRepository.GetPagedAsync(
+            pageIndex,
+            pageSize,
+            reservationFilter,
+            includeRoom: true);
+    }
+
+    private static Expression<Func<Reservation, bool>>? BuildReservationFilter(ReservationFilterDto filter)
+    {
+        return reservation =>
+            (filter.SearchQuery == null || reservation.GuestName.ToLower().Contains(filter.SearchQuery.ToLower()) ||
+            reservation.GuestEmail.ToLower().Contains(filter.SearchQuery.ToLower()) ||
+            reservation.GuestNumber.ToLower().Contains(filter.SearchQuery.ToLower()) ) &&
+            (filter.CreatedAt == null || reservation.CreatedAt.Date == filter.CreatedAt.Value.Date);
     }
 
     private bool IsRoomAvailable(int? roomId, DateOnly? checkIn, DateOnly? checkOut)

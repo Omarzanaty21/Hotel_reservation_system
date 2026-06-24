@@ -1,0 +1,87 @@
+<section class="filters">
+  <form (ngSubmit)="search()">
+    <label>
+      Search:
+      <input
+        type="text"
+        [(ngModel)]="filter.searchQuery"
+        name="searchQuery"
+        placeholder="Guest name, email…"
+      />
+    </label>
+    <label>
+      Created At:
+      <input type="date" [(ngModel)]="filter.createdAt" name="createdAt" />
+    </label>
+    <button type="submit">Search</button>
+  </form>
+</section>
+
+<p *ngIf="loading" class="status-msg">Loading reservations…</p>
+<p *ngIf="error" class="status-msg error">{{ error.message }}</p>
+
+<section class="list">
+  <ng-container *ngIf="!loading && reservations?.length > 0">
+    <div *ngFor="let r of reservations" class="card">
+
+      <!-- Left: room details -->
+      <div class="card__room">
+        <img
+          class="card__room-photo"
+          [src]="r.room.photo || '/images/hotel_default_pic.avif'"
+          [alt]="r.room.name"
+        />
+        <div class="card__room-info">
+          <h3 class="card__room-name">{{ r.room.name }}</h3>
+          <p class="card__room-desc">{{ r.room.description }}</p>
+          <div class="card__room-meta">
+            <span><strong>Capacity:</strong> {{ r.room.capacity }}</span>
+            <span><strong>Price/night:</strong> {{ r.room.pricePerNight | currency }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="card__divider"></div>
+
+      <!-- Right: guest + dates -->
+      <div class="card__guest">
+        <div class="card__guest-row">
+          <span class="card__guest-label">Guest Name</span>
+          <span class="card__guest-value">{{ r.guestName }}</span>
+        </div>
+        <div class="card__guest-row">
+          <span class="card__guest-label">Email</span>
+          <span class="card__guest-value">{{ r.guestEmail }}</span>
+        </div>
+        <div class="card__guest-row">
+          <span class="card__guest-label">Phone</span>
+          <span class="card__guest-value">{{ r.guestNumber }}</span>
+        </div>
+        <div class="card__guest-row">
+          <span class="card__guest-label">Check-in</span>
+          <span class="card__guest-value">{{ r.checkIn | date: 'mediumDate' }}</span>
+        </div>
+        <div class="card__guest-row">
+          <span class="card__guest-label">Check-out</span>
+          <span class="card__guest-value">{{ r.checkOut | date: 'mediumDate' }}</span>
+        </div>
+      </div>
+
+    </div>
+  </ng-container>
+</section>
+
+<p
+  *ngIf="!loading && !error && reservations?.length === 0"
+  class="status-msg"
+>
+  No reservations found.
+</p>
+
+<!-- Pagination -->
+<nav class="pagination" *ngIf="!loading && totalCount > 0">
+  <button (click)="goToPage(pageIndex - 1)" [disabled]="pageIndex === 0">← Prev</button>
+  <span class="page-info">Page {{ pageIndex + 1 }} of {{ totalPages }}</span>
+  <button (click)="goToPage(pageIndex + 1)" [disabled]="pageIndex >= totalPages - 1">Next →</button>
+</nav>

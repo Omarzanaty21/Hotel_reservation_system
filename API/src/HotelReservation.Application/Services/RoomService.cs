@@ -28,12 +28,7 @@ public class RoomService : IRoomService
     }
 
     private static Expression<Func<Room, bool>>? BuildRoomFilter(RoomFilterDto filter)
-    {
-        if (filter.CheckIn == null && filter.CheckOut == null && filter.Capacity == null)
-        {
-            return null;
-        }
-
+    {     
         return room =>
             (filter.Capacity == null || room.Capacity == filter.Capacity) &&
             (filter.CheckIn == null || filter.CheckOut == null ||
