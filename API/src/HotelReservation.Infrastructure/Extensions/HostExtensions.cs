@@ -1,3 +1,5 @@
+using HotelReservation.Application.Interfaces;
+using HotelReservation.Domain.Entities;
 using HotelReservation.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +16,9 @@ public static class HostExtensions
 
         try
         {
+            // Get the required services
             var context = services.GetRequiredService<ApplicationDbContext>();
+            var hashingService = services.GetRequiredService<IHashingService>();
 
             // 1. Run Pending Migrations
             context.Database.Migrate();
@@ -54,6 +58,19 @@ public static class HostExtensions
                 };
 
                 context.Rooms.AddRange(rooms);
+                context.SaveChanges();
+            }
+            if (!context.ApplicationUsers.Any())
+            {
+                var adminUser = new ApplicationUser
+                {
+                    UserName = "admin",
+                    PasswordHash = hashingService.HashPassword("Admin@123"),
+                    IsAdmin = true
+                };
+             
+                context.ApplicationUsers.Add(adminUser);
+
                 context.SaveChanges();
             }
         }

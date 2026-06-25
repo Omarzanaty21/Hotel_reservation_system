@@ -8,6 +8,7 @@ public class ApplicationDbContext : DbContext
 {
     public DbSet<Room> Rooms { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
+    public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)

@@ -1,4 +1,5 @@
-namespace HotelReservation.Application.Services;
+namespace HotelReservation.Infrastructure.Services;
+
 using HotelReservation.Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 

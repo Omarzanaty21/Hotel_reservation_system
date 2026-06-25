@@ -1,8 +1,10 @@
 using HotelReservation.Application.Interfaces;
 using HotelReservation.Application.Services;
+using HotelReservation.Application.Settings;
 using HotelReservation.Domain.Interfaces;
 using HotelReservation.Infrastructure.Data;
 using HotelReservation.Infrastructure.Repositories;
+using HotelReservation.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,13 +20,16 @@ public static class ServiceCollectionExtensions
             options.UseSqlite(
                 configuration.GetConnectionString("DefaultConnection")));
 
-        // Register repositories
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IReservationRepository, ReservationRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IHashingService, HashingService>();
         services.AddScoped<IRoomPhotoUploadService, RoomPhotoUploadService>();
-        services.AddHttpContextAccessor();
+        services.AddScoped<IJwtService, JwtService>();
+
+        // Bind JwtSettings from configuration
+        services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
         return services;
     }

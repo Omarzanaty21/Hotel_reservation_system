@@ -7,6 +7,7 @@ using HotelReservation.Application.Interfaces;
 using HotelReservation.Domain.Common;
 using HotelReservation.Domain.Entities;
 using HotelReservation.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelReservation.API.Controllers;
@@ -54,7 +55,7 @@ public class RoomManagementController : ControllerBase
 
         return Ok(response);
     }
-    
+    [Authorize("AdminOnly")]
     [HttpPost("Rooms")]
     public async Task<IActionResult> CreateRoom([FromForm] CreateRoomDto createRoomDto)
     {
@@ -78,7 +79,7 @@ public class RoomManagementController : ControllerBase
     #endregion
 
     #region Reservations
-
+    [Authorize("AdminOnly")]
     [HttpGet("Reservations")]
     public async Task<IActionResult> Index([FromQuery] ReservationFilterDto filter, [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
     {
@@ -109,6 +110,7 @@ public class RoomManagementController : ControllerBase
 
         return CreatedAtAction(nameof(CreateReservation), new { id = reservation.Id }, reservation);
     }
+    [Authorize("AdminOnly")]
     [HttpDelete("Reservations/{reservationId}")]
     public async Task<IActionResult> DeleteReservation(int reservationId)
     {
@@ -120,15 +122,23 @@ public class RoomManagementController : ControllerBase
     #endregion
 
     #region Helpers
-    private void ValidateReservationDates(DateOnly? checkIn, DateOnly? checkOut)
+    private void ValidateReservationDates(DateOnly checkIn, DateOnly checkOut)
     {
         if(checkIn < DateOnly.FromDateTime(DateTime.Now))
         {
             throw new InvalidTimeSpanException("Check-in date cannot be in the past.");
         }
-        else if (checkIn >= checkOut)
+        if (checkOut < DateOnly.FromDateTime(DateTime.Now))
+        {
+            throw new InvalidTimeSpanException("Check-out date cannot be in the past.");
+        }
+        if (checkIn >= checkOut)
         {
             throw new InvalidTimeSpanException("Check-out date must be after check-in date.");
+        }
+        if(checkOut > checkIn.AddMonths(1))
+        {
+            throw new InvalidTimeSpanException("Reservations cannot be made for more than 30 days.");
         }
     }
     #endregion

@@ -13,7 +13,9 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IRoomService, RoomService>();
         services.AddScoped<IReservationService, ReservationService>();
-
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
+        services.AddHttpContextAccessor();
+  
         return services;
     }
 }

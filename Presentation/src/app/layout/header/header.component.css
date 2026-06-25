@@ -65,6 +65,15 @@
   color: #ffffff;
 }
 
+/* ── Logout button (styled as a nav link) ─────────────────────────────────── */
+
+.header__logout-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
 /* ── Hamburger (mobile only) ──────────────────────────────────────────────── */
 
 .header__menu-toggle {
