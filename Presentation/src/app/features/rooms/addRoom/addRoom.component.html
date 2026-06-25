@@ -1,0 +1,125 @@
+<section class="reservation-form-wrapper">
+  <h2 class="reservation-form-wrapper__title">Add New Room</h2>
+
+  <form
+    class="reservation-form"
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    novalidate
+    enctype="multipart/form-data"
+  >
+
+    <!-- Name -->
+    <div class="form-field">
+      <label class="form-field__label" for="name">Room name</label>
+      <input
+        id="name"
+        class="form-field__input"
+        [class.form-field__input--error]="name.invalid && name.touched"
+        type="text"
+        formControlName="name"
+        aria-describedby="name-error"
+      />
+      @if (name.touched && name.errors) {
+        <p id="name-error" class="form-field__error" role="alert">
+          @if (name.errors['required']) {
+            Room name is required.
+          }
+        </p>
+      }
+    </div>
+
+    <!-- Description -->
+    <div class="form-field">
+      <label class="form-field__label" for="description">Description</label>
+      <textarea
+        id="description"
+        class="form-field__input form-field__textarea"
+        [class.form-field__input--error]="description.invalid && description.touched"
+        formControlName="description"
+        rows="3"
+        aria-describedby="description-error"
+      ></textarea>
+      @if (description.touched && description.errors) {
+        <p id="description-error" class="form-field__error" role="alert">
+          @if (description.errors['required']) {
+            Room description is required.
+          }
+        </p>
+      }
+    </div>
+
+    <!-- Capacity -->
+    <div class="form-field">
+      <label class="form-field__label" for="capacity">Capacity</label>
+      <select
+        id="capacity"
+        class="form-field__input"
+        [class.form-field__input--error]="capacity.invalid && capacity.touched"
+        formControlName="capacity"
+        aria-describedby="capacity-error"
+      >
+        <option value="">Select capacity…</option>
+        @for (opt of capacityOptions; track opt) {
+          <option [value]="opt">{{ opt }}</option>
+        }
+      </select>
+      @if (capacity.touched && capacity.errors) {
+        <p id="capacity-error" class="form-field__error" role="alert">
+          @if (capacity.errors['required'] || capacity.errors['pattern']) {
+            Invalid room capacity.
+          }
+        </p>
+      }
+    </div>
+
+    <!-- Price Per Night -->
+    <div class="form-field">
+      <label class="form-field__label" for="pricePerNight">Price per night ($)</label>
+      <input
+        id="pricePerNight"
+        class="form-field__input"
+        [class.form-field__input--error]="pricePerNight.invalid && pricePerNight.touched"
+        type="number"
+        formControlName="pricePerNight"
+        min="0.01"
+        step="0.01"
+        aria-describedby="pricePerNight-error"
+      />
+      @if (pricePerNight.touched && pricePerNight.errors) {
+        <p id="pricePerNight-error" class="form-field__error" role="alert">
+          @if (pricePerNight.errors['required']) {
+            Price per night is required.
+          } @else if (pricePerNight.errors['min']) {
+            Invalid price format.
+          }
+        </p>
+      }
+    </div>
+
+    <!-- Photo Upload -->
+    <div class="form-field">
+      <label class="form-field__label" for="photoUpload">Photo (optional)</label>
+      <input
+        id="photoUpload"
+        class="form-field__input"
+        type="file"
+        accept="image/*"
+        (change)="onFileChange($event)"
+        aria-describedby="photoUpload-hint"
+      />
+      <p id="photoUpload-hint" class="form-field__hint">
+        Accepted formats: JPG, PNG, WEBP, AVIF
+      </p>
+    </div>
+
+    <button
+      class="reservation-form__submit"
+      type="submit"
+      [disabled]="form.invalid || submitting"
+    >
+      {{ submitting ? 'Creating…' : 'Create Room' }}
+    </button>
+
+  </form>
+</section>

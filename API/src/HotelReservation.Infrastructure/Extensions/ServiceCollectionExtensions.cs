@@ -1,3 +1,5 @@
+using HotelReservation.Application.Interfaces;
+using HotelReservation.Application.Services;
 using HotelReservation.Domain.Interfaces;
 using HotelReservation.Infrastructure.Data;
 using HotelReservation.Infrastructure.Repositories;
@@ -21,6 +23,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IReservationRepository, ReservationRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IRoomPhotoUploadService, RoomPhotoUploadService>();
+        services.AddHttpContextAccessor();
 
         return services;
     }

@@ -19,16 +19,19 @@ public class RoomManagementController : ControllerBase
     private readonly IReservationService _reservationService;
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IRoomPhotoUploadService _roomPhotoUploadService;
 
     public RoomManagementController(IRoomService roomService,
                                     IReservationService reservationService,
                                     IMapper mapper,
-                                    IUnitOfWork unitOfWork)
+                                    IUnitOfWork unitOfWork,
+                                    IRoomPhotoUploadService roomPhotoUploadService)
     {
         _roomService = roomService;
         _reservationService = reservationService;
         _mapper = mapper;
         _unitOfWork = unitOfWork;
+        _roomPhotoUploadService = roomPhotoUploadService;
     }
     #region Rooms
     [HttpGet("Rooms")]
@@ -50,6 +53,26 @@ public class RoomManagementController : ControllerBase
         };
 
         return Ok(response);
+    }
+    
+    [HttpPost("Rooms")]
+    public async Task<IActionResult> CreateRoom([FromForm] CreateRoomDto createRoomDto)
+    {
+        string? photoUrl = null;
+        if (createRoomDto.PhotoUpload is not null)
+        {
+            photoUrl = await _roomPhotoUploadService.UploadRoomImageAsync(createRoomDto.PhotoUpload);
+        }
+
+        // Clear the PhotoUpload property to avoid serialization issues
+        createRoomDto.PhotoUpload = null; 
+        createRoomDto.Photo = photoUrl;
+
+        var room = await _roomService.CreateRoomAsync(createRoomDto);
+
+        await _unitOfWork.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(CreateRoom), new { id = room.Id }, room);
     }
 
     #endregion

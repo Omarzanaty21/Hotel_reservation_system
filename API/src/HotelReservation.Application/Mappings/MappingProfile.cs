@@ -9,8 +9,15 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
+        #region Room
         CreateMap<Room, RoomDto>().ReverseMap();
-        CreateMap<CreateReservationDto, Reservation>().ReverseMap();
+        CreateMap<Room, CreateRoomDto>().ReverseMap();
+        #endregion
+     
+        #region Reservation
+        CreateMap<Reservation, CreateReservationDto>().ReverseMap();
         CreateMap<Reservation, ReservationDto>().ReverseMap();
+        #endregion
+    
     }
 }

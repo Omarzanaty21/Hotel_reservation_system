@@ -9,5 +9,5 @@ public sealed class RoomDto
     public string Description { get; init; } = string.Empty;
     public RoomCapacity Capacity { get; init; }
     public decimal PricePerNight { get; init; }
-    public string Photo { get; init; } = string.Empty;
+    public string? Photo { get; init; } = string.Empty;
 }

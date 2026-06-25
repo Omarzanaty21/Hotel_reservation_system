@@ -8,7 +8,7 @@ public class Room : BaseEntity
     public string Description { get; set; } = string.Empty;
     public RoomCapacity Capacity { get; set; }
     public decimal PricePerNight { get; set; }
-    public string Photo { get; set; } = string.Empty;
+    public string? Photo { get; set; } 
 
     public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
 }

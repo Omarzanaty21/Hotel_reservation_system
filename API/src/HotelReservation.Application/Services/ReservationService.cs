@@ -52,9 +52,9 @@ public class ReservationService : IReservationService
         var reservation = await _reservationRepository.GetByIdAsync(reservationId);
         if (reservation == null)
         {
-            throw new KeyNotFoundException($"Reservation with ID {reservationId} not found.");
+            throw new KeyNotFoundException($"Reservation not found.");
         }
-        
+
         _reservationRepository.Delete(reservation);
     }
 

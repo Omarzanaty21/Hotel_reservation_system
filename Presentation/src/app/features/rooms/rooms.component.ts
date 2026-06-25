@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // 1. Import ChangeDetectorRef
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RoomsService } from '../../core/services/rooms.service';
@@ -29,7 +29,6 @@ export class RoomsComponent implements OnInit {
     return Math.ceil(this.totalCount / this.pageSize);
   }
 
-  // 2. Inject ChangeDetectorRef here
   constructor(private roomsService: RoomsService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
@@ -50,9 +49,7 @@ export class RoomsComponent implements OnInit {
   private loadRooms(): void {
     this.loading = true;
     this.error = null;
-    
-    // Explicitly detect changes to show the "loading" spinner in HTML
-    this.cdr.detectChanges(); 
+    this.cdr.detectChanges();
 
     const payload = {
       checkIn: this.filter.checkIn || null,
@@ -65,17 +62,13 @@ export class RoomsComponent implements OnInit {
         this.rooms = res.items || [];
         this.totalCount = res.totalCount;
         this.loading = false;
-        
-        // 3. Force Angular to re-render the view
-        this.cdr.detectChanges(); 
+        this.cdr.detectChanges();
       },
       error: (err: ApiError) => {
         this.error = err;
         this.rooms = [];
         this.loading = false;
-        
-        // Force Angular to re-render the view with the error state
-        this.cdr.detectChanges(); 
+        this.cdr.detectChanges();
       },
     });
   }
