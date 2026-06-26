@@ -1,0 +1,8 @@
+# Ignore all user-uploaded room images
+*
+
+# But keep this file and the .gitkeep placeholder so the directory
+# exists on a clean clone (the app creates it at runtime anyway,
+# but having it tracked avoids any startup edge cases)
+!.gitignore
+!.gitkeep
