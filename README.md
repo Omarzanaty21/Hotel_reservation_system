@@ -2,10 +2,54 @@
 
 A full-stack hotel reservation application with an Angular 22 frontend and an ASP.NET Core 8 Web API backend backed by PostgreSQL.
 
+Admin credentials: `admin` / `Admin@123` used to access admin features: {add_room, list_reservations ,cancel-reservations}
+
+---
+
+## Key Design Decisions
+
+### PostgreSQL over SQLite
+
+SQLite was used during early development because it is file-based, requires no external server, and allows the application to run with zero infrastructure setup. However, PostgreSQL was chosen for the final solution for the following reasons:
+
+- **Concurrency** — PostgreSQL handles multiple simultaneous connections properly, whereas SQLite serialises all writes and degrades quickly under concurrent load.
+- **Transaction isolation** — PostgreSQL supports `Serializable` isolation, which is used to prevent double-booking of rooms. SQLite's isolation model is insufficient for this guarantee.
+- **Production readiness** — PostgreSQL is a battle-tested, production-grade database with robust support for connection pooling, backups, replication, and monitoring tooling.
+- **Scalability** — PostgreSQL scales horizontally and vertically in ways SQLite cannot.
+
+The tradeoff is increased setup complexity and a dependency on a running database server. This is mitigated in development and deployment by Docker, which provides a PostgreSQL instance with a single command.
+
+### Environment Variables (.env)
+
+Runtime configuration is stored in a `.env` file rather than hardcoded in source files. This approach:
+
+- **Separates configuration from code** — values like connection strings, JWT secrets, and ports can change between environments without touching application code.
+- **Improves security** — sensitive values are not embedded in the codebase or build artifacts.
+- **Simplifies deployment** — Docker Compose reads the `.env` file directly to configure all containers, making environment-specific setup explicit and repeatable.
+- **Supports multiple environments** — the same codebase runs locally, in Docker, or in a CI pipeline by swapping a single file.
+
+The `.env` file in this repository contains only non-sensitive defaults so the project works immediately after cloning. In a real production deployment these values should be replaced with strong secrets and managed through a secrets manager or CI/CD environment variables.
+
+---
+
+## Future Improvements
+
+- **Refresh tokens and token revocation** — the current JWT implementation uses short-lived access tokens. Adding refresh tokens and a server-side revocation mechanism would improve security for longer sessions.
+- **Email notifications** — send confirmation and cancellation emails to guests when reservations are created or deleted.
+- **Room availability calendar** — a visual calendar view showing booked and available dates per room, giving users a clearer picture before making a reservation.
+- **Unit and integration tests** — increase confidence in business logic and API behaviour with automated tests covering reservation rules, authentication, and edge cases.
+- **CI/CD pipeline** — automate building, testing, and Docker image publishing on every push using GitHub Actions or a similar platform.
+- **Rate limiting** — protect the API from abuse by throttling repeated requests per client, particularly on authentication endpoints.
+- **Caching** — cache frequently accessed, rarely changing data such as room listings to reduce database load and improve response times.
+- **API versioning** — introduce versioning to allow the API to evolve without breaking existing clients.
+- **Localization** — support multiple languages in both the frontend and API error messages to make the application accessible to a wider audience.
+
 ---
 
 ## Table of Contents
 
+- [Key Design Decisions](#key-design-decisions)
+- [Future Improvements](#future-improvements)
 - [Prerequisites](#prerequisites)
 - [Project Structure](#project-structure)
 - [Running Locally (without Docker)](#running-locally-without-docker)
