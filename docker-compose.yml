@@ -1,0 +1,81 @@
+# ─── Named volumes ────────────────────────────────────────────────────────────
+volumes:
+  postgres-data:
+    driver: local
+  room-images:
+    driver: local
+
+# ─── Network ─────────────────────────────────────────────────────────────────
+networks:
+  hotel-network:
+    driver: bridge
+
+# ─── Services ─────────────────────────────────────────────────────────────────
+services:
+
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  hotel-db:
+    image: postgres:16-alpine
+    container_name: hotel-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+      POSTGRES_DB: ${DB_NAME:-HotelReservationDb}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - hotel-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-HotelReservationDb}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── ASP.NET Core API ─────────────────────────────────────────────────────────
+  hotel-api:
+    build:
+      context: ./API
+      dockerfile: Dockerfile
+    container_name: hotel-api
+    restart: unless-stopped
+    depends_on:
+      hotel-db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: "Server=hotel-db;Port=5432;User Id=${DB_USER:-postgres};Password=${DB_PASSWORD:-secret};Database=${DB_NAME:-HotelReservationDb};"
+      Cors__AllowedOrigins__0: http://localhost:${FRONTEND_PORT:-4200}
+      Cors__AllowedOrigins__1: http://hotel-frontend
+      JwtSettings__Secret: ${JWT_SECRET:-your-super-secret-key-change-this-in-production-min-32-chars}
+      JwtSettings__Issuer: ${JWT_ISSUER:-HotelReservationAPI}
+      JwtSettings__Audience: ${JWT_AUDIENCE:-HotelReservationClient}
+      JwtSettings__ExpirationHours: ${JWT_EXPIRATION_HOURS:-24}
+    volumes:
+      - room-images:/app/wwwroot/images/rooms
+    ports:
+      - "${API_PORT:-8080}:8080"
+    networks:
+      - hotel-network
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/8080' 2>/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ── Angular Frontend (Nginx) ─────────────────────────────────────────────────
+  hotel-frontend:
+    build:
+      context: ./Presentation
+      dockerfile: Dockerfile
+    container_name: hotel-frontend
+    restart: unless-stopped
+    depends_on:
+      hotel-api:
+        condition: service_healthy
+    ports:
+      - "${FRONTEND_PORT:-4200}:80"
+    networks:
+      - hotel-network

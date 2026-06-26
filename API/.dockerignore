@@ -1,0 +1,9 @@
+**/.git
+**/.gitignore
+**/.idea
+**/bin
+**/obj
+**/*.user
+**/*.suo
+**/*.db
+**/TestResults

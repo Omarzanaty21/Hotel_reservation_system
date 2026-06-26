@@ -2,13 +2,11 @@ namespace HotelReservation.Infrastructure.Services;
 
 using HotelReservation.Application.Interfaces;
 using Microsoft.AspNetCore.Http;
-
 using Microsoft.AspNetCore.Hosting;
 
 public class RoomPhotoUploadService : IRoomPhotoUploadService
 {
     private readonly IWebHostEnvironment _environment;
-    private readonly IHttpContextAccessor _httpContextAccessor;
 
     private static readonly string[] AllowedExtensions =
     {
@@ -18,10 +16,9 @@ public class RoomPhotoUploadService : IRoomPhotoUploadService
         ".webp"
     };
 
-    public RoomPhotoUploadService(IWebHostEnvironment environment, IHttpContextAccessor httpContextAccessor)
+    public RoomPhotoUploadService(IWebHostEnvironment environment)
     {
         _environment = environment;
-        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<string> UploadRoomImageAsync(IFormFile photo)
@@ -54,18 +51,13 @@ public class RoomPhotoUploadService : IRoomPhotoUploadService
 
         var fileName = $"{Guid.NewGuid()}{extension}";
 
-        var filePath = Path.Combine(
-            imagesFolder,
-            fileName);
+        var filePath = Path.Combine(imagesFolder, fileName);
 
-        await using var stream = new FileStream(
-            filePath,
-            FileMode.Create);
-
+        await using var stream = new FileStream(filePath, FileMode.Create);
         await photo.CopyToAsync(stream);
 
-        var request = _httpContextAccessor.HttpContext!.Request;
-
-        return $"{request.Scheme}://{request.Host}/images/rooms/{fileName}";
+        // Return a relative path — works in both local dev (proxied by Angular dev server)
+        // and Docker (proxied by Nginx), with no host dependency.
+        return $"/images/rooms/{fileName}";
     }
 }
