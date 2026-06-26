@@ -4,7 +4,7 @@
 # Usage: ./build-and-run.sh
 # ─────────────────────────────────────────────────────────────────────────────
 
-set -e
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
@@ -45,12 +45,18 @@ fi
 
 # ── Build images ──────────────────────────────────────────────────────────────
 echo "▶  Building Docker images (this may take a few minutes on first run)..."
-$COMPOSE build --pull
+if ! $COMPOSE build --pull; then
+  echo "❌  Image build failed. Check the output above."
+  exit 1
+fi
 
 # ── Start containers ──────────────────────────────────────────────────────────
 echo ""
 echo "▶  Starting containers..."
-$COMPOSE up -d
+if ! $COMPOSE up -d; then
+  echo "❌  Failed to start containers. Check the output above."
+  exit 1
+fi
 
 # ── Wait for frontend to be reachable ─────────────────────────────────────────
 echo ""
