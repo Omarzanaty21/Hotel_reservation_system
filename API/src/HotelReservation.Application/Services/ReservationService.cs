@@ -89,7 +89,7 @@ public class ReservationService : IReservationService
             (filter.SearchQuery == null || reservation.GuestName.ToLower().Contains(filter.SearchQuery.ToLower()) ||
             reservation.GuestEmail.ToLower().Contains(filter.SearchQuery.ToLower()) ||
             reservation.GuestNumber.ToLower().Contains(filter.SearchQuery.ToLower())) &&
-            (filter.CreatedAt == null || reservation.CreatedAt.Date == filter.CreatedAt.Value.Date);
+            (filter.CreatedAt == null || reservation.CreatedAt == filter.CreatedAt);
     }
 
     private bool IsRoomAvailable(int? roomId, DateOnly? checkIn, DateOnly? checkOut)

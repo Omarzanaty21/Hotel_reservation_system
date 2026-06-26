@@ -6,6 +6,6 @@ public abstract class BaseEntity
 {
     [Key]
     public int Id { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? UpdatedAt { get; set; }
+    public DateOnly CreatedAt { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
+    public DateOnly? UpdatedAt { get; set; }
 }

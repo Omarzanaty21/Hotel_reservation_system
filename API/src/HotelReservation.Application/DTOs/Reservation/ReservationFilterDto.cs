@@ -4,6 +4,6 @@ namespace HotelReservation.Application.DTOs;
 
 public class ReservationFilterDto
 {
-    public DateTime? CreatedAt { get; set; }
+    public DateOnly? CreatedAt { get; set; }
     public string? SearchQuery { get; set; }
 }

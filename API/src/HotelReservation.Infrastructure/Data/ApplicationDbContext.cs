@@ -66,7 +66,7 @@ public class ApplicationDbContext : DbContext
 
     private void UpdateTimestamps()
     {
-        var utcNow = DateTime.UtcNow;
+        var utcNow = DateOnly.FromDateTime(DateTime.UtcNow);
 
         foreach (var entry in ChangeTracker.Entries<BaseEntity>())
         {
