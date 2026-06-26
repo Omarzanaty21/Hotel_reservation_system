@@ -41,6 +41,9 @@ public class RoomManagementController : ControllerBase
         if(filter.CheckIn >= filter.CheckOut)
           throw new InvalidTimeSpanException("Check-in date must be before check-out date.");
 
+        if(filter.CheckIn == null && filter.CheckOut != null || filter.CheckIn != null && filter.CheckOut == null)
+          throw new InvalidTimeSpanException("Both check-in and check-out dates are used together for filtering. Please provide both dates or neither.");
+
         var pagedAvailableRooms = await _roomService.GetAvailableRoomsAsync(filter, pageIndex, pageSize);
 
         var roomsDto = _mapper.Map<IReadOnlyList<RoomDto>>(pagedAvailableRooms.Items);
