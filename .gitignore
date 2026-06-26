@@ -4,7 +4,10 @@
 ## Get latest from `dotnet new gitignore`
 
 # dotenv files
-.env
+# .env is intentionally tracked — it contains only non-sensitive defaults
+# needed for Docker Compose to run out of the box on a clean clone.
+# Do NOT commit real production secrets here.
+# .env
 
 # User-specific files
 *.rsuser
