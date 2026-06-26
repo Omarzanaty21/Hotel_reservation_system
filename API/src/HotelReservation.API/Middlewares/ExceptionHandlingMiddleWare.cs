@@ -3,6 +3,7 @@ using System.Net;
 using System.Text.Json;
 using Application.DTOs.Common;
 using HotelReservation.Application.Exceptions;
+using Npgsql;
 
 namespace HotelReservation.API.Middlewares;
     
@@ -63,6 +64,12 @@ public class ExceptionHandlingMiddleware
             errorCode = "OVERLAPPING_DATES";
             message = exception.Message;
         }
+        else if(exception is PostgresException postgresException && postgresException.ConstraintName == "no_overlapping_reservations")
+        {
+            statusCode = HttpStatusCode.BadRequest;
+            errorCode = "OVERLAPPING_DATES";
+            message = "The room is already booked for the selected dates.";
+        } 
 
         context.Response.StatusCode = (int)statusCode;
 

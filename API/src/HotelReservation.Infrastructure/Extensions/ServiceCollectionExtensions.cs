@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
     {
         // Register DbContext
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlite(
+            options.UseNpgsql(
                 configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));

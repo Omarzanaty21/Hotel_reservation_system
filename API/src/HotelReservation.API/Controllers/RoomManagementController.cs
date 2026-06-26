@@ -106,8 +106,6 @@ public class RoomManagementController : ControllerBase
 
         var reservation = await _reservationService.CreateReservationAsync(createReservationDto);
 
-        await _unitOfWork.SaveChangesAsync();
-
         return CreatedAtAction(nameof(CreateReservation), new { id = reservation.Id }, reservation);
     }
     [Authorize("AdminOnly")]

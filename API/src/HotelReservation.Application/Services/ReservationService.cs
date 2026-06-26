@@ -1,3 +1,4 @@
+using System.Data;
 using System.Linq.Expressions;
 using AutoMapper;
 using HotelReservation.Application.Dtos;
@@ -13,29 +14,53 @@ namespace HotelReservation.Application.Services;
 public class ReservationService : IReservationService
 {
     private readonly IReservationRepository _reservationRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public ReservationService(IReservationRepository reservationRepository, IMapper mapper)
+    public ReservationService(
+        IReservationRepository reservationRepository,
+        IUnitOfWork unitOfWork,
+        IMapper mapper)
     {
         _reservationRepository = reservationRepository;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
 
     public async Task<Reservation> CreateReservationAsync(CreateReservationDto reservation)
     {
-        // Check for overlapping reservations
-        var isRoomAvailable = IsRoomAvailable(reservation.RoomId, reservation.CheckIn, reservation.CheckOut);
+        await _unitOfWork.BeginTransactionAsync(IsolationLevel.Serializable);
 
-        if (!isRoomAvailable)
+        try
         {
-            throw new OverlappingDatesException("The room is already booked for the selected dates.");
+            // Re-check availability inside the serializable transaction to prevent double booking
+            var isRoomAvailable = IsRoomAvailable(reservation.RoomId, reservation.CheckIn, reservation.CheckOut);
+
+            if (!isRoomAvailable)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw new OverlappingDatesException("The room is already booked for the selected dates.");
+            }
+
+            Reservation createdReservation = _mapper.Map<Reservation>(reservation);
+
+            await _reservationRepository.AddAsync(createdReservation);
+            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.CommitTransactionAsync();
+
+            return createdReservation;
         }
-
-        Reservation createdReservation = _mapper.Map<Reservation>(reservation);
-
-        await _reservationRepository.AddAsync(createdReservation);
-        return createdReservation;
+        catch (OverlappingDatesException)
+        {
+            throw;
+        }
+        catch
+        {
+            await _unitOfWork.RollbackTransactionAsync();
+            throw;
+        }
     }
+
     public async Task<PagedResult<Reservation>> GetReservationsAsync(ReservationFilterDto filter, int pageIndex, int pageSize)
     {
         var reservationFilter = BuildReservationFilter(filter);
@@ -63,7 +88,7 @@ public class ReservationService : IReservationService
         return reservation =>
             (filter.SearchQuery == null || reservation.GuestName.ToLower().Contains(filter.SearchQuery.ToLower()) ||
             reservation.GuestEmail.ToLower().Contains(filter.SearchQuery.ToLower()) ||
-            reservation.GuestNumber.ToLower().Contains(filter.SearchQuery.ToLower()) ) &&
+            reservation.GuestNumber.ToLower().Contains(filter.SearchQuery.ToLower())) &&
             (filter.CreatedAt == null || reservation.CreatedAt.Date == filter.CreatedAt.Value.Date);
     }
 
